@@ -1,7 +1,7 @@
 ### Hexlet tests and linter status:
-[![Actions Status](https://github.com/kkrasilov/ai-for-developers-project-386/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/kkrasilov/ai-for-developers-project-386/actions)
+[![Actions Status](https://github.com/kkrasilov/ai-for-developers-project-387/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/kkrasilov/ai-for-developers-project-387/actions)
 
-# Call Booking
+# Call Booking 🚀
 
 A small call-booking service. Guests browse available event types (e.g. "Intro
 Call", "Consultation"), pick a free time slot and book it. The owner has a
