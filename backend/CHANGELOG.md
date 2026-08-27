@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/kkrasilov/ai-for-developers-project-387/compare/backend-v0.1.1...backend-v0.1.2) (2026-08-27)
+
+
+### Features
+
+* add call booking application ([7a1e977](https://github.com/kkrasilov/ai-for-developers-project-387/commit/7a1e9774bd564a896b537f0cbb8f4df6c774eb15))
+
 ## [0.1.1](https://github.com/kkrasilov/ai-for-developers-project-386/compare/backend-v0.1.0...backend-v0.1.1) (2026-08-27)
 
 
