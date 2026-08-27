@@ -1,0 +1,36 @@
+# Git
+/.git/
+/.gitignore
+
+# Backend runtime/dev files
+backend/.bundle
+backend/.env*
+backend/config/master.key
+backend/config/credentials/*.key
+backend/log/*
+backend/tmp/*
+!backend/log/.keep
+!backend/tmp/.keep
+backend/tmp/pids/*
+!backend/tmp/pids/.keep
+backend/storage/*
+!backend/storage/.keep
+backend/tmp/storage/*
+!backend/tmp/storage/.keep
+backend/.kamal
+backend/config/deploy*.yml
+backend/.devcontainer
+
+# Frontend
+frontend/node_modules
+frontend/dist
+
+# e2e / CI / editor
+.github
+.idea
+e2e/node_modules
+e2e/playwright-report
+e2e/test-results
+
+# Docs
+README.md

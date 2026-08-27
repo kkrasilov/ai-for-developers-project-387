@@ -1,0 +1,44 @@
+databases:
+  - name: app-db
+    plan: free
+    region: oregon
+    databaseName: backend_production
+    user: backend
+
+services:
+  - type: web
+    name: app
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: free
+    region: oregon
+    autoDeploy: true
+    healthCheckPath: /up
+    envVars:
+      - key: RAILS_ENV
+        value: production
+      - key: SECRET_KEY_BASE
+        generateValue: true
+      - key: DATABASE_HOST
+        fromDatabase:
+          name: app-db
+          property: host
+      - key: DATABASE_PORT
+        fromDatabase:
+          name: app-db
+          property: port
+      - key: DATABASE_USER
+        fromDatabase:
+          name: app-db
+          property: user
+      - key: BACKEND_DATABASE_PASSWORD
+        fromDatabase:
+          name: app-db
+          property: password
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: app-db
+          property: password
+      - key: FRONTEND_ORIGIN
+        value: ""

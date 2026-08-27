@@ -1,0 +1,47 @@
+#!/bin/bash -e
+
+# Enable jemalloc for reduced memory usage and latency.
+if [ -z "${LD_PRELOAD+x}" ]; then
+    LD_PRELOAD=$(find /usr/lib -name libjemalloc.so.2 -print -quit)
+    export LD_PRELOAD
+fi
+
+# Fall back to a randomly generated SECRET_KEY_BASE if one isn't provided,
+# so the image can still boot when run standalone (e.g. CI smoke checks
+# that invoke `docker run`/`docker compose` without passing env vars). Real
+# deployments (Render, see render.yaml) always inject their own
+# SECRET_KEY_BASE, which takes precedence over this fallback.
+if [ -z "${SECRET_KEY_BASE}" ]; then
+    export SECRET_KEY_BASE=$(ruby -rsecurerandom -e "print SecureRandom.hex(64)")
+fi
+
+# If running the rails server then create or migrate existing database
+if [ "${@: -2:1}" == "./bin/rails" ] && [ "${@: -1:1}" == "server" ]; then
+  # No DATABASE_HOST means we're running standalone (e.g. `docker run`
+  # without any env vars, as done by CI smoke checks like hexlet-check),
+  # not on Render (see render.yaml, which always sets DATABASE_HOST). In
+  # that case, start a local, ephemeral PostgreSQL server inside the
+  # container so the app can still boot and respond to health checks.
+  if [ -z "${DATABASE_HOST}" ]; then
+    echo "DATABASE_HOST not set; starting embedded PostgreSQL for standalone use..."
+    PG_BIN=$(find /usr/lib/postgresql -maxdepth 2 -type d -name bin | sort -V | tail -n1)
+    PGDATA="${PGDATA:-/tmp/pgdata}"
+
+    if [ ! -s "${PGDATA}/PG_VERSION" ]; then
+      "${PG_BIN}/initdb" -D "${PGDATA}" -U backend --auth=trust --no-sync >/tmp/initdb.log 2>&1
+    fi
+
+    "${PG_BIN}/pg_ctl" -D "${PGDATA}" \
+      -o "-c listen_addresses='localhost' -c unix_socket_directories='/tmp'" \
+      -l /tmp/postgres.log -w start
+
+    for _ in $(seq 1 30); do
+      "${PG_BIN}/pg_isready" -h 127.0.0.1 -p 5432 -U backend -q && break
+      sleep 0.5
+    done
+  fi
+
+  ./bin/rails db:prepare
+fi
+
+exec "${@}"
